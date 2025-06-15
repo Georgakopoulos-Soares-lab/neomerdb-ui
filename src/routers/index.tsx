@@ -33,6 +33,7 @@ import PatientDetails from '../pages/Patients';
 import AboutPage from '../pages/About';
 import { predictPatient } from '../helpers';
 import Visualazations from '../pages/Visualazations';
+import { fetchJaccardIndex } from '../services/visualazation.service';
 
 const rootRoute = createRootRoute({
   component: Layout,
@@ -147,6 +148,13 @@ const visualazationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/visualizations',
   component: () => <Visualazations />,
+  loader: async () => {
+    await queryClient.prefetchQuery({
+      queryFn: () => fetchJaccardIndex(13),
+      queryKey: ['jaccard_index', 13],
+      staleTime: 1000 * 60 * 60,
+    });
+  },
 });
 
 const notFoundRoute = createRoute({
