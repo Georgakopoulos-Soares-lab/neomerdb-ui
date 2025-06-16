@@ -38,6 +38,7 @@ import {
   fetchJaccardIndex,
   fetchOrgans,
 } from '../services/visualazation.service';
+import HelpPage from '../pages/Help';
 
 const rootRoute = createRootRoute({
   component: Layout,
@@ -172,6 +173,12 @@ const visualazationsRoute = createRoute({
   },
 });
 
+const helpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/help',
+  component: () => <HelpPage />,
+});
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/404',
@@ -211,6 +218,7 @@ const routeTree = rootRoute.addChildren([
   patientDetailsRoute,
   privacyAndLegalRoute,
   visualazationsRoute,
+  helpRoute,
   notFoundRoute,
   catchNotFound,
   downloadRoute,

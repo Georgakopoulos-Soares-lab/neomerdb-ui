@@ -8,6 +8,8 @@ import {
   Select,
   Typography,
   type SelectChangeEvent,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import {
@@ -102,19 +104,44 @@ export const DistributionChart = () => {
       <Typography variant="h5" gutterBottom marginBottom={2}>
         Distribution of Neomers by Organ and Cancer Type
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} mb={2} gap={2}>
-        <FormControl fullWidth size="small">
-          <InputLabel id="group-by-label">Group By</InputLabel>
-          <Select
-            labelId="group-by-label"
-            value={groupBy}
-            onChange={handleGroupByChange}
-            label="Group By"
-          >
-            <MenuItem value="organ">Organ</MenuItem>
-            <MenuItem value="cancerType">Cancer Type</MenuItem>
-          </Select>
-        </FormControl>
+      <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }} mb={2} gap={2}>
+        <ToggleButtonGroup
+          value={groupBy}
+          exclusive
+          onChange={(_, newValue) => {
+            if (newValue !== null) {
+              handleGroupByChange({ target: { value: newValue } } as SelectChangeEvent);
+            }
+          }}
+          color="primary"
+          sx={{
+            backgroundColor: '#e9efff',
+            borderRadius: '999px',
+            padding: '4px',
+            '& .MuiToggleButton-root': {
+              border: 'none',
+              borderRadius: '999px',
+              textTransform: 'none',
+              fontWeight: 600,
+              padding: '6px 18px',
+              color: '#3a3a3a',
+              '&.Mui-selected': {
+                backgroundColor: '#2a51d6',
+                color: '#fff',
+                boxShadow: '0 2px 6px rgba(42, 81, 214, 0.35)',
+              },
+              
+              '&:hover': {
+                backgroundColor: '#d9e3ff',
+              },
+            },
+          }}
+        >
+          <ToggleButton value="organ">Organs</ToggleButton>
+          <ToggleButton value="cancerType">Cancer Types</ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
         {renderFormControl()}
         <FormControl fullWidth size="small">
           <InputLabel id="k-length-label">K Length</InputLabel>
@@ -124,7 +151,7 @@ export const DistributionChart = () => {
             onChange={(event) => setK(Number(event.target.value))}
             label="K Length"
           >
-            {Array.from({ length: 6 }, (_, index) => index + 11).map((value) => (
+            {Array.from({ length: 7 }, (_, index) => index + 11).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}
               </MenuItem>
@@ -162,60 +189,85 @@ export const DistributionChart = () => {
             />
           </Box>
         )}
-        {!isDistributionFetching && distribution && distribution.length > 0 && (
-          <Box sx={{ height: 400 }}>
-            <ReactECharts
-              option={{
-                tooltip: {
-                  trigger: 'axis',
-                  axisPointer: {
-                    type: 'shadow',
+        {distribution && distribution.length > 0 ? (
+          <>
+            <Typography variant="subtitle2" textAlign="center" mb={1}>
+              Number of Nullomers per Donor Count
+            </Typography>
+            <Box sx={{ height: 400 }}>
+              <ReactECharts
+                option={{
+                  tooltip: {
+                    trigger: 'item',
+                    formatter: '{b} donors: {c} nullomers',
                   },
-                },
-                xAxis: {
-                  type: 'category',
-                  data: distribution.map((d) => d.donorCount.toString()),
-                  name: 'Donor Count',
-                  nameLocation: 'middle',
-                  nameGap: 30,
-                  axisLabel: {
-                    rotate: 0,
+                  grid: {
+                    top: 30,
+                    bottom: 60,
+                    left: 60,
+                    right: 30,
                   },
-                },
-                yAxis: {
-                  type: 'value',
-                  name: 'Num Nullomers',
-                },
-                series: [
-                  {
-                    type: 'bar',
-                    data: distribution.map((d) => d.numNullomers),
-                    itemStyle: {
-                      color: '#4079FE',
+                  xAxis: {
+                    type: 'category',
+                    data: distribution.map((d) => d.donorCount.toString()),
+                    name: 'Donor Count',
+                    nameLocation: 'middle',
+                    nameGap: 30,
+                    axisLabel: {
+                      rotate: 0,
                     },
-                    name: 'Nullomers',
                   },
-                ],
-              }}
-              style={{ height: '100%', width: '100%' }}
-            />
-          </Box>
-        )}{' '}
-        {(!isDistributionFetching && !distribution) ||
-          (distribution && distribution.length === 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%',
-              }}
-            >
-              <Typography variant="h6" color="textSecondary">
-                No data available for the selected options.
-              </Typography>
+                  yAxis: {
+                    type: 'value',
+                    name: 'Num Nullomers',
+                    splitLine: {
+                      lineStyle: {
+                        type: 'dashed',
+                        color: '#eee',
+                      },
+                    },
+                  },
+                  series: [
+                    {
+                      type: 'bar',
+                      data: distribution.map((d) => d.numNullomers),
+                      itemStyle: {
+                        borderRadius: [4, 4, 0, 0],
+                        color: {
+                          type: 'linear',
+                          x: 0,
+                          y: 0,
+                          x2: 0,
+                          y2: 1,
+                          colorStops: [
+                            { offset: 0, color: '#82b1ff' },
+                            { offset: 1, color: '#2962ff' },
+                          ],
+                        },
+                      },
+                      barWidth: '60%',
+                      name: 'Nullomers',
+                    },
+                  ],
+                }}
+                style={{ height: '100%', width: '100%' }}
+              />
             </Box>
-          ))}
+          </>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <Typography variant="h6" color="textSecondary">
+              No data available for the selected options.
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Paper>
   );
