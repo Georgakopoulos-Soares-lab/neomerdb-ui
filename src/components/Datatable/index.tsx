@@ -32,6 +32,7 @@ import RowFiltering from './row-filtering';
 import ShareLink from './share-link';
 import DownLoadSelectedButton from './download-selected-button';
 import { Error } from '@mui/icons-material';
+import type { FilterItem } from '../../types/patients';
 
 interface DataTableProperties<T extends Record<string, unknown>> {
   data: T[];
@@ -51,7 +52,7 @@ interface DataTableProperties<T extends Record<string, unknown>> {
   columnVisibility?: VisibilityState;
   defaultColumnVisibility?: string[];
   onColumnVisibilityChange?: (visibility: VisibilityState) => void;
-  onFilterChange?: (columnId: string, value: string) => void;
+  onFilterChange?: (filters: FilterItem[]) => void;
   onColumnOrderingChange?: (columnId: string, newIndex: number) => void;
   tableToolbox?: React.ReactNode;
   filterSuggestions?: string[];
@@ -76,6 +77,7 @@ export function DataTable<T extends Record<string, unknown>>({
   onColumnOrderingChange,
   tableToolbox,
   filterSuggestions = [],
+  onFilterChange = () => {},
 }: DataTableProperties<T>) {
   const initialVisibility = useMemo(() => {
     const visibility: Record<string, boolean> = {};
@@ -186,7 +188,11 @@ export function DataTable<T extends Record<string, unknown>>({
         <Grid container direction={{ xs: 'column', sm: 'row' }} size={{ xs: 12, sm: 'auto' }}>
           <ColumnsVisibilityToggle table={table} defaultVisibleColumns={defaultColumnVisibility} />
           <ColumnOrderingToggle table={table} onColumnOrderingChange={onColumnOrderingChange} />
-          <RowFiltering table={table} filterSuggestions={filterSuggestions} />
+          <RowFiltering
+            table={table}
+            filterSuggestions={filterSuggestions}
+            onFilterChange={onFilterChange}
+          />
           <DownLoadSelectedButton table={table} />
           <ShareLink />
         </Grid>

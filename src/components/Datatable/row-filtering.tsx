@@ -14,17 +14,13 @@ import {
 } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import { useState, type JSX } from 'react';
+import type { FilterItem } from '../../types/patients';
 
 interface RowFilteringProperties<T extends Record<string, unknown>> {
   table: Table<T>;
   defaultVisibleColumns?: string[];
   filterSuggestions?: string[];
-}
-
-interface FilterItem {
-  field: string | undefined;
-  operator: string;
-  value: string;
+  onFilterChange?: (filters: FilterItem[]) => void;
 }
 
 const FILTERS_OPERATORS_GENERIC = ['contains', 'equals', 'startsWith', 'endsWith'];
@@ -34,6 +30,7 @@ const FILTERS_OPERATORS_NUMERIC = ['equals', 'notEquals', 'greaterThan', 'lessTh
 const RowFiltering = <T extends Record<string, unknown>>({
   table,
   filterSuggestions = [],
+  onFilterChange = () => {},
 }: RowFilteringProperties<T>): JSX.Element => {
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>();
   const [filters, setFilters] = useState<FilterItem[]>([]);
@@ -81,14 +78,21 @@ const RowFiltering = <T extends Record<string, unknown>>({
 
   const handleClearFilters = () => {
     setFilters([]);
+    if (onFilterChange) {
+      onFilterChange([]);
+    }
   };
 
-  const handleChange = (index: number, key: keyof FilterItem, value: string | null) => {
-    setFilters((previous) => {
-      const newFilters = [...previous];
-      newFilters[`${index}`] = { ...newFilters[`${index}`], [key]: value };
-      return newFilters;
-    });
+  const handleChange = (index: number, key: keyof FilterItem, value: string | undefined) => {
+    const newFilters = [...filters];
+    newFilters[`${index}`] = { ...newFilters[`${index}`], [key]: value };
+
+    setFilters(newFilters);
+    if (onFilterChange) {
+      onFilterChange(newFilters);
+    }
+
+    return newFilters;
   };
 
   const columnOptions = table.getAllColumns().map((col) => col.id);
@@ -97,6 +101,9 @@ const RowFiltering = <T extends Record<string, unknown>>({
 
   const handleRemoveFilter = (index: number) => {
     setFilters((previous) => previous.filter((_, index_) => index_ !== index));
+    if (onFilterChange) {
+      onFilterChange(filters.filter((_, index_) => index_ !== index));
+    }
   };
 
   return (

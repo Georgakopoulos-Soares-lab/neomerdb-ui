@@ -29,7 +29,7 @@ export const DistributionChart = () => {
   );
 
   const [groupBy, setGroupBy] = useState<'organ' | 'cancerType'>('organ');
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(organs[0] || cancerTypes[0] || '');
   const [K, setK] = useState<number>(13);
 
   const {
@@ -150,7 +150,7 @@ export const DistributionChart = () => {
             onChange={(event) => setK(Number(event.target.value))}
             label="K Length"
           >
-            {Array.from({ length: 7 }, (_, index) => index + 11).map((value) => (
+            {Array.from({ length: 6 }, (_, index) => index + 11).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}
               </MenuItem>

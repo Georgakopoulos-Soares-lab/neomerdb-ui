@@ -130,3 +130,9 @@ export interface GenomeAnalysisResponse {
 }
 
 export type NullomerAnalysisResponse = ExomeAnalysisResponse | GenomeAnalysisResponse;
+
+export interface FilterItem {
+  field: string | undefined;
+  operator: string;
+  value: string;
+}

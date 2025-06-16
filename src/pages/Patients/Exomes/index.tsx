@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import { usePatientExomes } from '../../../hooks/use-patients';
 import { DataTable } from '../../../components/Datatable';
-import { normalizeTableData } from '../../../helpers';
-import type { PatientsEntry, PatientsHeader } from '../../../types/patients';
+import { filterPatientData, normalizeTableData } from '../../../helpers';
+import type { FilterItem, PatientsEntry, PatientsHeader } from '../../../types/patients';
 import { INITIAL_EXOMERS_VISIBLE_COLUMNS } from '../../../constants';
 import { useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
@@ -20,6 +20,7 @@ const PatientsGenomes = () => {
   const [columnsState, setColumnsState] = useState<{
     ordering: string[];
     visibility: Record<string, boolean>;
+    filters?: FilterItem[];
   } | null>({
     visibility:
       headers?.reduce(
@@ -30,6 +31,7 @@ const PatientsGenomes = () => {
         {},
       ) || {},
     ordering: INITIAL_EXOMERS_VISIBLE_COLUMNS,
+    filters: [],
   });
 
   const [tableParameters, setTableParameters] = useState<{
@@ -44,11 +46,13 @@ const PatientsGenomes = () => {
     [K in PatientsHeader]: PatientsEntry;
   }>;
 
+  const filteredRows = filterPatientData(tableRows, columnsState?.filters || []);
+
   if (!headers || !exomesData) {
     return;
   }
 
-  const rows = tableRows.slice(
+  const rows = filteredRows.slice(
     tableParameters.page * tableParameters.pageSize,
     (tableParameters.page + 1) * tableParameters.pageSize,
   );
@@ -78,9 +82,16 @@ const PatientsGenomes = () => {
           });
         }}
         pageSize={tableParameters.pageSize}
-        pageSizeSelection={[10, 20, 50, 100, exomesData?.length || 200]}
+        pageSizeSelection={[10, 20, 50, 100, filterPatientData?.length || 200]}
         page={tableParameters.page}
-        totalRows={exomesData?.length || 0}
+        totalRows={filteredRows?.length || 0}
+        onFilterChange={(filters) => {
+          setTableParameters((previous) => ({ ...previous, page: 0 }));
+          setColumnsState((previous) => ({
+            ...previous!,
+            filters: filters,
+          }));
+        }}
         onPageChange={(page) => {
           setTableParameters((previous) => ({ ...previous, page }));
         }}

@@ -1,5 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { CANCER_METADATA } from '../constants';
+import type { FilterItem, PatientsEntry, PatientsHeader } from '../types/patients';
 
 export const mapHeaderToLabel = (header: string): string => {
   const mappings: Record<string, string> = {
@@ -92,4 +93,48 @@ export const putAcronym = (cancerType: string): string => {
   }
 
   return acronyms[`${cancerType}`] ?? cancerType;
+};
+
+export const filterPatientData = (
+  data: Array<{
+    [K in PatientsHeader]: PatientsEntry;
+  }>,
+  filters: FilterItem[],
+): Array<{
+  [K in PatientsHeader]: PatientsEntry;
+}> => {
+  if (!data || data.length === 0 || !filters || filters.length === 0) {
+    return data;
+  }
+
+  return data.filter((row) => {
+    return filters.every((filter) => {
+      const value = row[filter.field as PatientsHeader];
+      if (value === undefined || value === null) return false;
+
+      switch (filter.operator) {
+        case 'contains': {
+          return String(value)
+            .toLowerCase()
+            .includes(filter.value?.toLowerCase() || '');
+        }
+        case 'equals': {
+          return String(value).toLowerCase() === (filter.value?.toLowerCase() || '');
+        }
+        case 'startsWith': {
+          return String(value)
+            .toLowerCase()
+            .startsWith(filter.value?.toLowerCase() || '');
+        }
+        case 'endsWith': {
+          return String(value)
+            .toLowerCase()
+            .endsWith(filter.value?.toLowerCase() || '');
+        }
+        default: {
+          return false;
+        }
+      }
+    });
+  });
 };
