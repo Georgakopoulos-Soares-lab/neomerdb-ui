@@ -1,4 +1,4 @@
-import { Outlet } from '@tanstack/react-router';
+import { HeadContent, Outlet } from '@tanstack/react-router';
 
 import Grid from '@mui/material/Grid';
 
@@ -35,6 +35,7 @@ const Layout = () => {
             component="main"
             p={3}
           >
+            <HeadContent />
             <Outlet />
           </Grid>
         </Grid>

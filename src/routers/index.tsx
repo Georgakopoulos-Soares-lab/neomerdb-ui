@@ -42,18 +42,28 @@ import HelpPage from '../pages/Help';
 
 const rootRoute = createRootRoute({
   component: Layout,
+  head: () => ({
+    meta: [
+      {
+        name: 'description',
+        content: 'Neomer is a platform for exploring genomic data.',
+      },
+    ],
+  }),
 });
 
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Home,
+  head: () => ({ meta: [{ title: '   Home' }] }),
 });
 
 const privacyAndLegalRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/privacy',
   component: PrivacyAndLegal,
+  head: () => ({ meta: [{ title: 'NeomerDB | Privacy & Legal' }] }),
 });
 
 const neomerGenomesRoute = createRoute({
@@ -72,6 +82,7 @@ const neomerGenomesRoute = createRoute({
       queryFn: () => fetchGenomes({ ...DEFAULT_NULLOMETER_QUERY_PARAMS, ...query }),
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Nullomers in Genomes' }] }),
 });
 
 const neomerExomesRoute = createRoute({
@@ -90,6 +101,7 @@ const neomerExomesRoute = createRoute({
       queryFn: () => fetchExomes({ ...DEFAULT_NULLOMETER_QUERY_PARAMS, ...query }),
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Nullomers in Exomes' }] }),
 });
 
 const patientGenomesRoute = createRoute({
@@ -107,6 +119,7 @@ const patientGenomesRoute = createRoute({
       queryFn: () => fetchCancerTypesPatients(),
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Donors (Genomes)' }] }),
 });
 
 const patientExomesRoute = createRoute({
@@ -124,6 +137,7 @@ const patientExomesRoute = createRoute({
       queryFn: () => fetchCancerTypesPatients(),
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Donors (Exomes)' }] }),
 });
 
 const patientDetailsRoute = createRoute({
@@ -147,6 +161,7 @@ const patientDetailsRoute = createRoute({
       },
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Patient Details' }] }),
 });
 
 const visualazationsRoute = createRoute({
@@ -171,30 +186,35 @@ const visualazationsRoute = createRoute({
       staleTime: 1000 * 60 * 60,
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Visualizations' }] }),
 });
 
 const helpRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/help',
   component: () => <HelpPage />,
+  head: () => ({ meta: [{ title: 'NeomerDB | Help' }] }),
 });
 
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/404',
   component: () => <NotFound />,
+  head: () => ({ meta: [{ title: 'NeomerDB | 404 - Page Not Found' }] }),
 });
 
 const downloadRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/downloads',
   component: () => <DownLoads />,
+  head: () => ({ meta: [{ title: 'NeomerDB | Downloads' }] }),
 });
 
 const aboutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/about',
   component: () => <AboutPage />,
+  head: () => ({ meta: [{ title: 'NeomerDB | About' }] }),
 });
 
 const catchNotFound = createRoute({
@@ -207,6 +227,7 @@ const catchNotFound = createRoute({
       replace: true,
     });
   },
+  head: () => ({ meta: [{ title: 'NeomerDB | Not Found' }] }),
 });
 
 const routeTree = rootRoute.addChildren([
