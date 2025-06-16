@@ -9,3 +9,28 @@ export interface JaccartIndex {
 export interface JaccardIndexResponse {
   jaccard_indices: JaccartIndex[];
 }
+
+export interface OrgansResponse {
+  organs: string[];
+}
+
+export interface CancerTypesResponse {
+  cancerTypes: string[];
+}
+
+interface DistributionNeomerKItem {
+  donorCount: number;
+  numNullomers: number;
+}
+
+export interface OrganDistributionResponse {
+  organ: string;
+  K: number;
+  distribution: DistributionNeomerKItem[] | null;
+}
+
+export interface CancerTypeDistributionResponse {
+  cancer_type: string;
+  K: number;
+  distribution: DistributionNeomerKItem[] | null;
+}

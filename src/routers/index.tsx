@@ -33,7 +33,11 @@ import PatientDetails from '../pages/Patients';
 import AboutPage from '../pages/About';
 import { predictPatient } from '../helpers';
 import Visualazations from '../pages/Visualazations';
-import { fetchJaccardIndex } from '../services/visualazation.service';
+import {
+  fetchCancerTypes,
+  fetchJaccardIndex,
+  fetchOrgans,
+} from '../services/visualazation.service';
 
 const rootRoute = createRootRoute({
   component: Layout,
@@ -152,6 +156,17 @@ const visualazationsRoute = createRoute({
     await queryClient.prefetchQuery({
       queryFn: () => fetchJaccardIndex(13),
       queryKey: ['jaccard_index', 13],
+      staleTime: 1000 * 60 * 60,
+    });
+
+    await queryClient.prefetchQuery({
+      queryKey: ['organs'],
+      queryFn: () => fetchOrgans(),
+      staleTime: 1000 * 60 * 60,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: ['cancer_types'],
+      queryFn: () => fetchCancerTypes(),
       staleTime: 1000 * 60 * 60,
     });
   },

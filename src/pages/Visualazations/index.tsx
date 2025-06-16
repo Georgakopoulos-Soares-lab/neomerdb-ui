@@ -1,6 +1,7 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { CancerTypeLengthPie } from '../../components/Visualazations/neomers-by-cancer-type-length';
 import { JaccardChart } from '../../components/Visualazations/jaccard-chart';
+import { DistributionChart } from '../../components/Visualazations/distribution-chart';
 
 const Visualazations = () => {
   return (
@@ -16,6 +17,9 @@ const Visualazations = () => {
         </Grid>
         <Grid flex={1}>
           <JaccardChart />
+        </Grid>
+        <Grid flex={1}>
+          <DistributionChart />
         </Grid>
       </Grid>
     </Container>
