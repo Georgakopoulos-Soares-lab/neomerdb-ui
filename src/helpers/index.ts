@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { CANCER_METADATA } from '../constants';
-import type { FilterItem, PatientsEntry, PatientsHeader } from '../types/patients';
+import type { PatientsEntry, PatientsHeader } from '../types/patients';
+import type { FilterItem } from '../types/nullomers';
 
 export const mapHeaderToLabel = (header: string): string => {
   const mappings: Record<string, string> = {

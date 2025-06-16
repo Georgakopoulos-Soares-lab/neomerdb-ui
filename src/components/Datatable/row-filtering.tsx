@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import type { Table } from '@tanstack/react-table';
 import { useState, type JSX } from 'react';
-import type { FilterItem } from '../../types/patients';
+import type { FilterItem } from '../../types/nullomers';
 
 interface RowFilteringProperties<T extends Record<string, unknown>> {
   table: Table<T>;

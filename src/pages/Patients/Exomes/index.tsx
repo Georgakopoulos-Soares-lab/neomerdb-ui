@@ -2,10 +2,11 @@ import { Box } from '@mui/material';
 import { usePatientExomes } from '../../../hooks/use-patients';
 import { DataTable } from '../../../components/Datatable';
 import { filterPatientData, normalizeTableData } from '../../../helpers';
-import type { FilterItem, PatientsEntry, PatientsHeader } from '../../../types/patients';
+import type { PatientsEntry, PatientsHeader } from '../../../types/patients';
 import { INITIAL_EXOMERS_VISIBLE_COLUMNS } from '../../../constants';
 import { useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
+import type { FilterItem } from '../../../types/nullomers';
 
 const PatientsGenomes = () => {
   const { data, isLoading, error } = usePatientExomes();

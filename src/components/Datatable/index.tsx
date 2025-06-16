@@ -32,7 +32,7 @@ import RowFiltering from './row-filtering';
 import ShareLink from './share-link';
 import DownLoadSelectedButton from './download-selected-button';
 import { Error } from '@mui/icons-material';
-import type { FilterItem } from '../../types/patients';
+import type { FilterItem } from '../../types/nullomers';
 
 interface DataTableProperties<T extends Record<string, unknown>> {
   data: T[];
