@@ -20,6 +20,8 @@ import {
   CircularProgress,
   Grid,
   Checkbox,
+  Typography,
+  Button,
 } from '@mui/material';
 
 import { generateColumns } from '../../helpers';
@@ -29,6 +31,7 @@ import ColumnOrderingToggle from './column-ordering-toggle';
 import RowFiltering from './row-filtering';
 import ShareLink from './share-link';
 import DownLoadSelectedButton from './download-selected-button';
+import { Error } from '@mui/icons-material';
 
 interface DataTableProperties<T extends Record<string, unknown>> {
   data: T[];
@@ -66,6 +69,7 @@ export function DataTable<T extends Record<string, unknown>>({
   onRowsPerPageChange,
   onRowClick,
   loading = false,
+  error,
   columnVisibility,
   defaultColumnVisibility,
   onColumnVisibilityChange,
@@ -188,187 +192,227 @@ export function DataTable<T extends Record<string, unknown>>({
         </Grid>
         <Grid>{tableToolbox}</Grid>
       </Grid>
-      <TableContainer
-        component={Paper}
-        ref={parentReference}
-        square
-        sx={{
-          flex: 1,
-          overflowX: 'auto',
-          overflowY: 'auto',
-          maxHeight: '70vh',
-          width: '100%',
-          borderRadius: 2,
-          boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-          transition: 'box-shadow 0.3s ease-in-out',
-          '&:hover': {
-            boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
-          },
-        }}
-      >
-        <Table
-          stickyHeader={true}
+      {error && (
+        <Box
           sx={{
-            tableLayout: 'auto',
+            color: 'error.main',
+            backgroundColor: 'rgba(255, 235, 238, 0.8)',
+            padding: 2,
+            borderRadius: 1,
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+          }}
+          flex={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          position="relative"
+          zIndex={1}
+          width="100%"
+          height="100%"
+          flexDirection="column"
+          gap={2}
+        >
+          <Error sx={{ fontSize: 40, marginRight: 1, color: 'error.main' }} />
+          <Typography variant="h6" color="error.main">
+            {error}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Please check your data or contact support.
+          </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              globalThis.location.reload();
+            }}
+          >
+            Refresh
+          </Button>
+        </Box>
+      )}
+      {!error && (
+        <TableContainer
+          component={Paper}
+          ref={parentReference}
+          square
+          sx={{
+            flex: 1,
+            overflowX: 'auto',
+            overflowY: 'auto',
+            maxHeight: '70vh',
             width: '100%',
-            minWidth: 600,
-            borderCollapse: 'collapse',
-            '& tbody': {
-              display: 'table-row-group',
+            borderRadius: 2,
+            boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+            transition: 'box-shadow 0.3s ease-in-out',
+            '&:hover': {
+              boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
             },
-            '& tbody tr:nth-of-type(odd)': { backgroundColor: '#fcfcfc' },
           }}
         >
-          <TableHead
+          <Table
+            stickyHeader={true}
             sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(6px)',
-              position: 'sticky',
-              top: 0,
-              zIndex: 1,
-              borderBottom: '2px solid #e0e0e0',
+              tableLayout: 'auto',
+              width: '100%',
+              minWidth: 600,
+              borderCollapse: 'collapse',
+              '& tbody': {
+                display: 'table-row-group',
+              },
+              '& tbody tr:nth-of-type(odd)': { backgroundColor: '#fcfcfc' },
             }}
           >
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                sx={{
-                  display: 'flex',
-                  width: '100%',
-                }}
-              >
-                <TableCell
-                  padding="checkbox"
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Checkbox
-                    indeterminate={table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                    checked={table.getIsAllRowsSelected()}
-                    onChange={table.getToggleAllRowsSelectedHandler()}
-                    slotProps={{ input: { 'aria-label': 'select all rows' } }}
-                  />
-                </TableCell>
-                {headerGroup.headers
-                  .filter((header) =>
-                    table.getVisibleFlatColumns().some((col) => col.id === header.column.id),
-                  )
-                  .map((header) => (
-                    <TableCell
-                      key={header.id}
-                      sx={{
-                        fontWeight: 'bold',
-                        width: header.getSize(),
-                        display: 'flex',
-                        flex: 1,
-                        alignItems: 'center',
-                        boxSizing: 'border-box',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'flex-start',
-                          width: '100%',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </Box>
-                    </TableCell>
-                  ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody
-            sx={{
-              display: 'grid',
-              height: `${totalSize}px`,
-              position: 'relative',
-            }}
-          >
-            {virtualRows.map((virtualRow) => {
-              const row = table.getRowModel().rows[virtualRow.index];
-              return (
+            <TableHead
+              sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(6px)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+                borderBottom: '2px solid #e0e0e0',
+              }}
+            >
+              {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
-                  key={row.id}
-                  ref={(element) => rowVirtualizer.measureElement(element)}
-                  data-index={virtualRow.index}
-                  onClick={() => {
-                    if (onRowClick) {
-                      onRowClick(row.original);
-                    }
-                  }}
+                  key={headerGroup.id}
                   sx={{
                     display: 'flex',
-                    position: 'absolute',
-                    transform: `translateY(${virtualRow.start}px)`,
                     width: '100%',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease-in-out',
-                    '&:hover': {
-                      backgroundColor: '#e3f2fd !important',
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    },
                   }}
                 >
-                  <TableCell padding="checkbox">
+                  <TableCell
+                    padding="checkbox"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Checkbox
-                      checked={row.getIsSelected()}
-                      onChange={row.getToggleSelectedHandler()}
-                      slotProps={{ input: { 'aria-label': 'select row' } }}
+                      indeterminate={table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+                      checked={table.getIsAllRowsSelected()}
+                      onChange={table.getToggleAllRowsSelectedHandler()}
+                      slotProps={{ input: { 'aria-label': 'select all rows' } }}
                     />
                   </TableCell>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      sx={{
-                        py: 1.5,
-                        px: {
-                          xs: 1,
-                          sm: 2,
-                        },
-                        minWidth: 120,
-                        fontSize: {
-                          xs: '0.75rem',
-                          sm: '0.875rem',
-                        },
-                        fontFamily: 'Roboto, sans-serif',
-                        flex: 1,
-                        borderBottom: '1px solid #eee',
-                        wordBreak: 'break-word',
-                        width: cell.column.getSize(),
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxSizing: 'border-box',
-                      }}
-                    >
-                      <Box
+                  {headerGroup.headers
+                    .filter((header) =>
+                      table.getVisibleFlatColumns().some((col) => col.id === header.column.id),
+                    )
+                    .map((header) => (
+                      <TableCell
+                        key={header.id}
                         sx={{
+                          fontWeight: 'bold',
+                          width: header.getSize(),
                           display: 'flex',
+                          flex: 1,
                           alignItems: 'center',
-                          justifyContent: 'flex-start',
-                          width: '100%',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
+                          boxSizing: 'border-box',
                         }}
                       >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Box>
-                    </TableCell>
-                  ))}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </Box>
+                      </TableCell>
+                    ))}
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableHead>
+            <TableBody
+              sx={{
+                display: 'grid',
+                height: `${totalSize}px`,
+                position: 'relative',
+              }}
+            >
+              {virtualRows.map((virtualRow) => {
+                const row = table.getRowModel().rows[virtualRow.index];
+                return (
+                  <TableRow
+                    key={row.id}
+                    ref={(element) => rowVirtualizer.measureElement(element)}
+                    data-index={virtualRow.index}
+                    onClick={() => {
+                      if (onRowClick) {
+                        onRowClick(row.original);
+                      }
+                    }}
+                    sx={{
+                      display: 'flex',
+                      position: 'absolute',
+                      transform: `translateY(${virtualRow.start}px)`,
+                      width: '100%',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease-in-out',
+                      '&:hover': {
+                        backgroundColor: '#e3f2fd !important',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={row.getIsSelected()}
+                        onChange={row.getToggleSelectedHandler()}
+                        slotProps={{ input: { 'aria-label': 'select row' } }}
+                      />
+                    </TableCell>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        sx={{
+                          py: 1.5,
+                          px: {
+                            xs: 1,
+                            sm: 2,
+                          },
+                          minWidth: 120,
+                          fontSize: {
+                            xs: '0.75rem',
+                            sm: '0.875rem',
+                          },
+                          fontFamily: 'Roboto, sans-serif',
+                          flex: 1,
+                          borderBottom: '1px solid #eee',
+                          wordBreak: 'break-word',
+                          width: cell.column.getSize(),
+                          display: 'flex',
+                          alignItems: 'center',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Box>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
       <TablePagination
         rowsPerPage={pageSize || 10}
         component="div"

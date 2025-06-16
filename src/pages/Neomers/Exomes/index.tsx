@@ -14,7 +14,6 @@ import type {
   NullomerEntry,
   NullomerHeader,
   NullomerQueryParameters,
-  NullomerResponse,
   NullomerStatsParameters,
 } from '../../../types/nullomers';
 import { Box } from '@mui/material';
@@ -46,14 +45,7 @@ const Exomes = () => {
     }
   }, [parameters]);
 
-  const { isLoading, data } = (useExomes(parameters) as {
-    data: NullomerResponse | undefined;
-    isLoading: boolean;
-    isError: boolean;
-  }) || {
-    data: { headers: [], data: [], totalCount: 0 },
-    isLoading: false,
-  };
+  const { isLoading, data, error } = useExomes(parameters);
 
   const { headers, data: tableData, totalCount } = data || { headers: [], data: [], totalCount: 0 };
 
@@ -115,6 +107,7 @@ const Exomes = () => {
             };
           });
         }}
+        error={error?.message || ''}
         pageSize={parameters.limit}
         page={parameters.page}
         totalRows={totalCount}

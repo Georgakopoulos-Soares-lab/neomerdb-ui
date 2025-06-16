@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useRouter } from '@tanstack/react-router';
 
 const PatientsGenomes = () => {
-  const { data, isLoading } = usePatientExomes();
+  const { data, isLoading, error } = usePatientExomes();
 
   const { data: exomesData, headers } = data || {
     data: [],
@@ -98,6 +98,7 @@ const PatientsGenomes = () => {
           });
         }}
         loading={isLoading}
+        error={error?.message || ''}
       />
     </Box>
   );

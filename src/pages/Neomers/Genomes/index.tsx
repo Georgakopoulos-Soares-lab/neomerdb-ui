@@ -16,7 +16,6 @@ import type {
   NullomerEntry,
   NullomerHeader,
   NullomerQueryParameters,
-  NullomerResponse,
   NullomerStatsParameters,
 } from '../../../types/nullomers';
 import { Box } from '@mui/material';
@@ -47,11 +46,7 @@ const Genomes = () => {
     }
   }, [parameters]);
 
-  const { isLoading, data } = (useGenomes(parameters) as {
-    data: NullomerResponse | undefined;
-    isLoading: boolean;
-    isError: boolean;
-  }) || {
+  const { isLoading, data, error } = useGenomes(parameters) || {
     data: { headers: [], data: [], totalCount: 0 },
     isLoading: false,
   };
@@ -124,6 +119,7 @@ const Genomes = () => {
           setParameters((previous) => ({ ...previous, limit: rowsPerPage, page: 0 }))
         }
         loading={isLoading}
+        error={error?.message}
         tableToolbox={
           <ToolBar
             isLoading={isLoading}

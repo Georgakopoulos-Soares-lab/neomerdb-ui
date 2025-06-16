@@ -19,12 +19,13 @@ import { useJaccardIndex } from '../../hooks/use-visualazations';
 import ReactECharts from 'echarts-for-react';
 import { useMemo, useState } from 'react';
 import { putAcronym } from '../../helpers';
+import { WarningAmber } from '@mui/icons-material';
 
 export const JaccardChart = () => {
   const [K, setK] = useState(13);
   const [warningOpen, setWarningOpen] = useState(false);
 
-  const { data, isFetching } = useJaccardIndex(K);
+  const { data, isFetching, error } = useJaccardIndex(K);
   const { jaccard_indices } = data || { jaccard_indices: [] };
 
   const { xLabels, yLabels, heatmapData, labels } = useMemo(() => {
@@ -204,6 +205,26 @@ export const JaccardChart = () => {
                 transform: 'translate(-50%, -50%)',
               }}
             />
+          </Box>
+        )}
+        {error && (
+          <Box
+            width={'100%'}
+            height={'100%'}
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1 }}
+            gap={2}
+          >
+            <WarningAmber color="error" sx={{ fontSize: 48 }} />
+            <Typography variant="h6" color="error">
+              {error.message}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Please try again later.
+            </Typography>
           </Box>
         )}
         {data && <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />}

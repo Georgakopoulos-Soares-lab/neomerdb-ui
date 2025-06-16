@@ -17,6 +17,7 @@ import {
   useOrgansAndCancerTypes,
 } from '../../hooks/use-visualazations';
 import { useCallback, useMemo, useState } from 'react';
+import { WarningAmber } from '@mui/icons-material';
 
 export const DistributionChart = () => {
   const [organsResult, cancerTypesResult] = useOrgansAndCancerTypes();
@@ -31,13 +32,11 @@ export const DistributionChart = () => {
   const [selectedValue, setSelectedValue] = useState('');
   const [K, setK] = useState<number>(13);
 
-  const { data: distributionData, isFetching: isDistributionFetching } = useDistributionNeomerKData(
-    K,
-    groupBy,
-    selectedValue,
-  );
-
-  console.log('Distribution Data:', distributionData);
+  const {
+    data: distributionData,
+    isFetching: isDistributionFetching,
+    error: distributionError,
+  } = useDistributionNeomerKData(K, groupBy, selectedValue);
 
   const { distribution } = distributionData || {};
 
@@ -130,7 +129,7 @@ export const DistributionChart = () => {
                 color: '#fff',
                 boxShadow: '0 2px 6px rgba(42, 81, 214, 0.35)',
               },
-              
+
               '&:hover': {
                 backgroundColor: '#d9e3ff',
               },
@@ -189,7 +188,7 @@ export const DistributionChart = () => {
             />
           </Box>
         )}
-        {distribution && distribution.length > 0 ? (
+        {distribution && distribution.length > 0 && (
           <>
             <Typography variant="subtitle2" textAlign="center" mb={1}>
               Number of Nullomers per Donor Count
@@ -218,7 +217,8 @@ export const DistributionChart = () => {
                     },
                   },
                   yAxis: {
-                    type: 'value',
+                    type: 'log',
+                    logBase: 10,
                     name: 'Num Nullomers',
                     splitLine: {
                       lineStyle: {
@@ -254,7 +254,8 @@ export const DistributionChart = () => {
               />
             </Box>
           </>
-        ) : (
+        )}
+        {!distribution?.length && !isDistributionFetching && !distributionError && (
           <Box
             sx={{
               display: 'flex',
@@ -265,6 +266,26 @@ export const DistributionChart = () => {
           >
             <Typography variant="h6" color="textSecondary">
               No data available for the selected options.
+            </Typography>
+          </Box>
+        )}
+        {!!distributionError && (
+          <Box
+            width={'100%'}
+            height={'100%'}
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1 }}
+            gap={2}
+          >
+            <WarningAmber color="error" sx={{ fontSize: 48 }} />
+            <Typography variant="h6" color="error">
+              {distributionError.message}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Please try again later.
             </Typography>
           </Box>
         )}
