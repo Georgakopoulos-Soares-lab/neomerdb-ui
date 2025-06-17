@@ -369,7 +369,10 @@ export function DataTable<T extends Record<string, unknown>>({
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={row.getIsSelected()}
-                        onChange={row.getToggleSelectedHandler()}
+                        onClick={(event_) => {
+                          event_.stopPropagation();
+                          row.getToggleSelectedHandler()(event_);
+                        }}
                         slotProps={{ input: { 'aria-label': 'select row' } }}
                       />
                     </TableCell>

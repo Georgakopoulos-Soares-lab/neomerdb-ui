@@ -212,14 +212,28 @@ export const DistributionChart = () => {
                     name: 'Donor Count',
                     nameLocation: 'middle',
                     nameGap: 30,
+                    nameTextStyle: {
+                      fontSize: 16,
+                      color: '#000',
+                    },
                     axisLabel: {
                       rotate: 0,
+                      fontSize: 16,
+                      color: '#000',
                     },
                   },
                   yAxis: {
                     type: 'log',
                     logBase: 10,
                     name: 'Num Nullomers',
+                    nameTextStyle: {
+                      fontSize: 16,
+                      color: '#000',
+                    },
+                    axisLabel: {
+                      fontSize: 16,
+                      color: '#000',
+                    },
                     splitLine: {
                       lineStyle: {
                         type: 'dashed',

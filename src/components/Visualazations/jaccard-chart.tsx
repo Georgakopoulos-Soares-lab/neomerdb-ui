@@ -66,19 +66,28 @@ export const JaccardChart = () => {
     },
     grid: {
       height: '75%',
-      top: '10%',
+      top: '5%',
     },
     xAxis: {
       type: 'category',
       data: xLabels,
       splitArea: { show: true },
-      axisLabel: { rotate: 45, fontFamily: 'Poppins' },
+      axisLabel: {
+        rotate: 45,
+        fontSize: Math.max(10, Math.min(18, 500 / labels.length)),
+        overflow: 'truncate',
+        interval: 0,
+        formatter: (value: string) => value.length > 5 ? value.slice(0, 5) + '…' : value
+      },
     },
     yAxis: {
       type: 'category',
       data: yLabels,
       splitArea: { show: true },
-      axisLabel: { fontFamily: 'Poppins' },
+      axisLabel: {
+        fontSize: Math.max(10, Math.min(18, 500 / labels.length)),
+        overflow: 'truncate'
+      },
     },
     visualMap: {
       show: false,
@@ -90,8 +99,7 @@ export const JaccardChart = () => {
       itemWidth: 20,
       itemHeight: 14,
       textStyle: {
-        fontSize: 12,
-        fontFamily: 'Poppins',
+        fontSize: 16,
       },
       pieces: [
         { min: 1, max: 1, color: '#000' },
@@ -120,7 +128,8 @@ export const JaccardChart = () => {
             borderWidth: 1,
           },
         },
-        gridSize: 8,
+        gridSize: 12,
+        square: true,
       },
     ],
   };
@@ -133,7 +142,7 @@ export const JaccardChart = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        height: 600,
+        height: { xs: 'auto', md: 700 },
         flex: 1,
         padding: 2,
       }}
@@ -179,7 +188,7 @@ export const JaccardChart = () => {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ width: '100%', height: 400, flex: 1 }} position="relative">
+      <Box sx={{ width: '100%', height: { xs: 300, md: 500 }, flex: 1 }} position="relative">
         {isFetching && (
           <Box
             position={'absolute'}
