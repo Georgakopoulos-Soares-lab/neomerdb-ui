@@ -15,6 +15,7 @@ import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { CACHED_DATA } from '../../constants';
+import { putAcronym } from '../../helpers';
 
 const getRingSeries = () => {
   const levels = Object.keys(CACHED_DATA).sort((a, b) => Number(b) - Number(a));
@@ -22,7 +23,7 @@ const getRingSeries = () => {
   const gap = 5;
 
   return levels.map((level, index) => {
-    const outerRadius = 95 - index * (ringWidth + gap);
+    const outerRadius = 90 - index * (ringWidth + gap);
     const innerRadius = outerRadius - ringWidth;
 
     const isOutermost = index === 0;
@@ -37,9 +38,13 @@ const getRingSeries = () => {
         ? {
             show: true,
             position: 'outside',
-            formatter: '{b}',
-            fontFamily: 'Poppins',
+            formatter: (parameters: { name: string }) => {
+              const name = parameters.name;
+              return putAcronym(name);
+            },
+            fontSize: 18,
             overflow: 'truncate',
+            distanceToLabelLine: 10,
           }
         : { show: false },
       labelLine: isOutermost
@@ -47,6 +52,8 @@ const getRingSeries = () => {
             show: true,
             length: 10,
             length2: 15,
+            smooth: true,
+            margin: 8,
             lineStyle: {
               width: 1,
             },
@@ -96,6 +103,7 @@ export const CancerTypeLengthPie: React.FC = () => {
         label: {
           show: true,
           formatter: '{b}: {c}',
+          fontSize: 18,
         },
         data: entries.map(({ length, value }) => ({
           name: length,
@@ -107,12 +115,6 @@ export const CancerTypeLengthPie: React.FC = () => {
 
   const option = {
     tooltip: { trigger: 'item' },
-    legend: {
-      show: !!dialogSelected,
-      textStyle: {
-        fontFamily: 'Poppins',
-      },
-    },
     series: getRingSeries(),
   };
 
@@ -127,9 +129,9 @@ export const CancerTypeLengthPie: React.FC = () => {
       },
     },
     legend: {
-      show: !!dialogSelected,
-      textStyle: { fontFamily: 'Poppins' },
+      show: false,
     },
+
     series: dialogSelected ? getPieForCancerType(dialogSelected) : getRingSeries(),
   };
 

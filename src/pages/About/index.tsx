@@ -149,6 +149,12 @@ const AboutPage = () => {
                 trigger: 'item',
                 formatter: '{b}: {c}',
               },
+              labelLine: {
+                show: true,
+                length: 10,
+                length2: 10,
+              },
+
               legend: {
                 show: true,
                 orient: 'horizontal',
@@ -175,12 +181,9 @@ const AboutPage = () => {
                       const percent = ((parameters.value / total) * 100).toFixed(2);
                       return `${parameters.name}: ${percent}%`;
                     },
-                    fontSize: 10,
+                    fontSize: 20,
                   },
-                  labelLayout: {
-                    rotate: true,
-                    hideOverlap: true,
-                  },
+
                   emphasis: {
                     itemStyle: {
                       shadowBlur: 10,
