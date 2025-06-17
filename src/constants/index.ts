@@ -825,3 +825,113 @@ export const ABOUT_US_DIAGRAM_EXOMES_VALUES = {
   Nonstop_Mutation: 0.055,
   In_Frame_Ins: 0.03,
 };
+
+export const HELP_PAGE_SECTIONS = [
+  {
+    title: 'Neomer Pages (Genomes & Exomes)',
+    description: 'Detailed views and filters for neomer records across genome and exome datasets.',
+    slides: [
+      {
+        img: '/images/neomer_table.png',
+        label: 'Data Table',
+        description:
+          'Upon accessing the Neomers page, users are presented with a paginated display of all neomers corresponding to a selected length value. Both genomic and exomic datasets within this page maintain complete feature parity, ensuring consistent functionality and analysis capabilities across both dataset types. Users can refine the displayed neomers through various filtering criteria, including cancer-specific details, genomic regions, allele frequency (serving as an indicator of confidence in identifying neomers as cancer signatures), and patient characteristics. Additionally, the interface provides functionality for users to customize and reorder column visibility, allowing tailored views according to specific analytical requirements. Users can subsequently download the filtered and customized datasets.',
+      },
+      {
+        img: '/images/neomer_stats.png',
+        label: 'Statistics View',
+        description:
+          'Furthermore, the Neomers page includes analytical tools that facilitate statistical evaluation. These tools enable users to group neomers by available attributes, display the top-ranking groups in descending order, and analyze distribution patterns across various columns, supporting comprehensive assessment and interpretation of neomer data.',
+      },
+    ],
+  },
+  {
+    title: 'Patient Pages (Genomes & Exomes)',
+    description: 'Browse and filter donor information and their associated neomer findings.',
+    slides: [
+      {
+        img: '/images/donor_table.png',
+        label: 'Patients Table',
+        description:
+          'The Patient Data page provides functionalities that enable users to filter patient records based on specific individual characteristics. Users can select particular patient records and download the selected entries in CSV format. Additionally, the interface allows customization of visible columns, enhancing usability. Both genomic and exomic datasets within the patient data exhibit complete feature parity, ensuring uniformity. Selecting an individual patient directs the user to a detailed patient page.',
+      },
+      {
+        img: '/images/donor_filters.png',
+        label: 'Filtering Interface',
+        description:
+          'Users can filter on patient characteristics such as age at diagnosis, sex, cancer type and more. ',
+      },
+    ],
+  },
+  {
+    title: 'Patient Page',
+    description: 'Review individual donor (patient) data, neomer findings, and neomer statistics.',
+    slides: [
+      {
+        img: '/images/patient_overview.png',
+        label: 'Overview',
+        description:
+          'The patient details page provides comprehensive information on patient characteristics, including the cancer type and associated organ. From this detailed view, users can perform a patient-specific neomer search by specifying a desired sequence length and inputting a text prefix. This functionality generates a list of the top matching neomers of the specified length that begin with the provided text. Moreover, upon selecting a neomer from the results of the prefix-based search, users can examine its occurrence across different patients, cancer types, and organs, thereby enabling deeper investigation into the distribution of specific neomers.',
+      },
+      {
+        img: '/images/patient_neomers_and_viz.png',
+        label: 'Patient Neomers and Neomer Analysis',
+        description: 'Searching by neomer prefix and analyzing a neomer',
+      },
+    ],
+  },
+  {
+    title: 'Visualizations',
+    description:
+      'NeomerDB provides multiple dynamic visualizations to explore the neomer data. These include the Jaccard index that compares the shared neomers between cancer types, pie charts that break down the number of neomers discovered per cancer types across k-mer lengths and break-down of neomers discover by the neomer length. Finally, the user can visualize selected patient samples and examine the number of neomers identified and their recurrency. ',
+    slides: [
+      {
+        img: '/images/neomers_by_cancer_type_and_length.png',
+        label: 'Data Charts',
+        description:
+          'A multi leveled pie chart where each ring represents a neomer length and each color represents a different cancer type ',
+      },
+      {
+        img: '/images/neomers_by_length_for_specific_cancer_type.png',
+        label: 'Pie Chart for specific cancer type',
+        description:
+          'When the user clicks in a specific slice of the pie chart representing a cancer type he can inspect the distribution on the different neomer lengths in a pie chart for the selected Cancer Type',
+      },
+      {
+        img: '/images/jaccard.png',
+        label: 'Jaccard Similarity',
+        description:
+          'The Jaccard heatmap is used to showcase that little to no overlap takes place between neomers of different cancer types.',
+      },
+    ],
+  },
+  {
+    title: 'Download Page',
+    description: 'Export selected datasets and results for further offline analysis.',
+    slides: [
+      {
+        img: '/images/download_center.png',
+        label: 'Data Export',
+        description:
+          'The neomerDB dataset is openly available for download via Zenodo repositories, providing users with flexible access to curated, cancer-specific genomic information. Downloads can be parameterized through the neomerDB website based on neomer length. Users can also distinguish between Genomic and Exomic datasets and further refine their selection by downloading the dataset in its entirety, by individual cancer type, or by cancer organ system. All datasets were generated using the neomer extraction and common variant filtering algorithms and are provided in compressed CSV format.',
+      },
+    ],
+  },
+  {
+    title: 'About & License',
+    description:
+      'Information about NeomerDB, General statistics and stats, authorship, affiliations, and licensing.',
+    slides: [
+      {
+        img: '/images/about_page.png',
+        label: 'About NeomerDB',
+        description: 'Learn about the project background, authors, and affiliations.',
+      },
+      {
+        img: '/images/license_page.png',
+        label: 'Privacy & License',
+        description: 'Understand data usage rights and license agreements.',
+      },
+    ],
+  },
+];

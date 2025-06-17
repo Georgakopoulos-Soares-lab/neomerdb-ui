@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Container, Paper, IconButton, Dialog } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperClass } from 'swiper';
@@ -8,100 +8,17 @@ import 'swiper/css';
 import { useState } from 'react';
 import { Tabs, Tab } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-
-const sections = [
-  {
-    title: 'Nullomer Pages (Genomes & Exomes)',
-    description:
-      'Detailed views and filters for nullomer records across genome and exome datasets.',
-    slides: [
-      {
-        img: '/images/nullomer_table.png',
-        label: 'Data Table',
-        description:
-          'Explore nullomer data across genomes and exomes with powerful table features like filtering, sorting, and downloads.',
-      },
-      {
-        img: '/images/nullomer_stats.png',
-        label: 'Statistics View',
-        description: 'Analyze distribution patterns and donor-based statistics.',
-      },
-    ],
-  },
-  {
-    title: 'Donor Pages (Genomes & Exomes)',
-    description: 'Browse and filter donor information and their associated nullomer findings.',
-    slides: [
-      {
-        img: '/images/donor_table.png',
-        label: 'Donor Table',
-        description: 'Browse donor metadata and their associated nullomer findings.',
-      },
-      {
-        img: '/images/donor_filters.png',
-        label: 'Filtering Interface',
-        description: 'Customize your view with advanced filtering and export tools.',
-      },
-    ],
-  },
-  {
-    title: 'Patient Page',
-    description:
-      'Review individual donor (patient) data, nullomer findings, and personalized statistics.',
-    slides: [
-      {
-        img: '/images/patient_overview.png',
-        label: 'Overview',
-        description: 'Dive into individual donor data, nullomer findings and personalized stats.',
-      },
-    ],
-  },
-  {
-    title: 'Visualizations',
-    description: 'Interactive charts and plots for visual exploration of nullomer and donor data.',
-    slides: [
-      {
-        img: '/images/visualizations_chart.png',
-        label: 'Data Charts',
-        description:
-          'Interactive charts highlighting nullomer patterns, donor groupings, and frequency distributions.',
-      },
-    ],
-  },
-  {
-    title: 'Download Page',
-    description: 'Export selected datasets and results for further offline analysis.',
-    slides: [
-      {
-        img: '/images/download_center.png',
-        label: 'Data Export',
-        description: 'Download selected datasets for offline analysis or reuse.',
-      },
-    ],
-  },
-  {
-    title: 'About & License',
-    description: 'Information about NeomerDB, authorship, affiliations, and licensing.',
-    slides: [
-      {
-        img: '/images/about_page.png',
-        label: 'About NeomerDB',
-        description: 'Learn about the project background, authors, and affiliations.',
-      },
-      {
-        img: '/images/license_page.png',
-        label: 'Privacy & License',
-        description: 'Understand data usage rights and license agreements.',
-      },
-    ],
-  },
-];
+import { HELP_PAGE_SECTIONS } from '../../constants';
 
 const HelpPage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogImage, setDialogImage] = useState('');
 
-  console.log(swiperInstance?.isBeginning, swiperInstance?.isEnd);
+  
+
+  const sections = HELP_PAGE_SECTIONS;
 
   const selectedSection = sections[Number(selectedTab)];
   return (
@@ -128,6 +45,7 @@ const HelpPage = () => {
           {selectedSection.description}
         </Typography>
         <Swiper
+          key={selectedTab}
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={16}
           slidesPerView={1}
@@ -144,7 +62,7 @@ const HelpPage = () => {
           }}
         >
           {selectedSection.slides.map(({ img, label, description }) => (
-            <SwiperSlide key={label}>
+            <SwiperSlide>
               <Paper elevation={3} sx={{ p: 2, m: 2, cursor: 'pointer' }}>
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                   <IconButton
@@ -154,26 +72,33 @@ const HelpPage = () => {
                     <ChevronLeft />
                   </IconButton>
                   <Box
-                    component={'img'}
-                    src={img}
-                    alt={label}
-                    style={{
-                      width: '80%',
-                      maxWidth: 600,
-                      margin: '0 auto',
-                      display: 'block',
-                      borderRadius: 8,
+                    onClick={() => {
+                      setDialogImage(img);
+                      setOpenDialog(true);
                     }}
-                    ref={(element: HTMLImageElement | null) => {
-                      if (element) {
-                        const errorHandler = () => {
-                          element.src = 'https://placehold.co/600x400';
-                          element.removeEventListener('error', errorHandler);
-                        };
-                        element.addEventListener('error', errorHandler);
-                      }
-                    }}
-                  />
+                    sx={{ cursor: 'zoom-in', width: '600px', margin: '0 auto' }}
+                  >
+                    <Box
+                      component={'img'}
+                      src={img}
+                      alt={label}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 8,
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      }}
+                      ref={(element: HTMLImageElement | null) => {
+                        if (element) {
+                          const errorHandler = () => {
+                            element.src = 'https://placehold.co/600x400';
+                            element.removeEventListener('error', errorHandler);
+                          };
+                          element.addEventListener('error', errorHandler);
+                        }
+                      }}
+                    />
+                  </Box>
                   <IconButton
                     className="custom-swiper-button-next"
                     sx={{ visibility: swiperInstance?.isEnd ? 'hidden' : 'visible' }}
@@ -191,6 +116,21 @@ const HelpPage = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="lg">
+          <Box
+            component="img"
+            src={dialogImage}
+            alt="Expanded"
+            sx={{
+              width: '100%',
+              height: 'auto',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              p: 2,
+            }}
+          />
+        </Dialog>
       </Box>
     </Container>
   );
