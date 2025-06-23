@@ -58,6 +58,7 @@ interface DataTableProperties<T extends Record<string, unknown>> {
   tableToolbox?: React.ReactNode;
   filterSuggestions?: string[];
   filtersOperators?: Record<string, string[]>;
+  groupedColumns?: { group: string; columns: string[] }[];
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -68,6 +69,7 @@ export function DataTable<T extends Record<string, unknown>>({
   page,
   pageSize,
   pageSizeSelection = [10, 20, 50, 100],
+  groupedColumns = [],
   onPageChange,
   onRowsPerPageChange,
   onRowClick,
@@ -190,7 +192,11 @@ export function DataTable<T extends Record<string, unknown>>({
         direction={'row'}
       >
         <Grid container direction={{ xs: 'column', sm: 'row' }} size={{ xs: 12, sm: 'auto' }}>
-          <ColumnsVisibilityToggle table={table} defaultVisibleColumns={defaultColumnVisibility} />
+          <ColumnsVisibilityToggle
+            table={table}
+            defaultVisibleColumns={defaultColumnVisibility}
+            groupedColumns={groupedColumns}
+          />
           <ColumnOrderingToggle table={table} onColumnOrderingChange={onColumnOrderingChange} />
           <RowFiltering
             table={table}

@@ -127,6 +127,19 @@ const Exomes = () => {
             useStats={useStats}
           />
         }
+        groupedColumns={
+          // All columns starts with 'AF' are grouped together with name 'Allele frequency (AF)' and other Patient characteristics
+          [
+            {
+              group: 'Patient characteristics',
+              columns: headersSafe.filter((header) => header.startsWith('AF') === false),
+            },
+            {
+              group: 'Allele frequency (AF)',
+              columns: headersSafe.filter((header) => header.startsWith('AF')),
+            },
+          ]
+        }
         filterSuggestions={[
           'ACGACCGTTCG',
           'CGAACGGTCGT',
