@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   Container,
   Typography,
@@ -9,25 +11,12 @@ import {
   Box,
   Dialog,
   DialogContent,
-  Tabs,
-  Tab,
 } from '@mui/material';
-import { useState } from 'react';
-import ReactECharts from 'echarts-for-react';
-import { ABOUT_US_DIAGRAM_GENOMES_VALUES, ABOUT_US_DIAGRAM_EXOMES_VALUES } from '../../constants';
+import NullomersValuesDiagram from '../../components/Visualazations/nullomers-values';
+import SankeyDiagrams from '../../components/Visualazations/sankey-diagrams';
 
 const AboutPage = () => {
   const [expanded, setExpanded] = useState(false);
-  const [tabValue, setTabValue] = useState('genomes');
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
-    setTabValue(newValue);
-  };
-
-  const DIAGRAM_VALUES =
-    tabValue === 'genomes' ? ABOUT_US_DIAGRAM_GENOMES_VALUES : ABOUT_US_DIAGRAM_EXOMES_VALUES;
-
-  const total = Object.values(DIAGRAM_VALUES).reduce((sum, value) => sum + value, 0);
 
   return (
     <Container maxWidth="lg">
@@ -45,6 +34,26 @@ const AboutPage = () => {
           diagnostics, therapeutic targeting, and immunogenic profiling.
         </Typography>
 
+        <Box
+          component="img"
+          src="/images/neomer-algorithm.jpeg"
+          alt="Neomer Algorithm"
+          onClick={() => setExpanded(true)}
+          sx={{
+            display: 'block',
+            mx: 'auto',
+            width: '70%',
+            maxWidth: '500px',
+            height: 'auto',
+
+            my: 5,
+            borderRadius: 2,
+            boxShadow: 3,
+            cursor: 'pointer',
+            transition: 'all 0.3s ease-in-out',
+          }}
+        />
+
         <Typography variant="body1" align="justify" sx={{ mt: 2 }}>
           The database aggregates neomer sequences derived from over 10,000 tumor-matched Whole
           Exome Sequencing (WES) and 2,775 Whole Genome Sequencing (WGS) samples across multiple
@@ -55,25 +64,7 @@ const AboutPage = () => {
           neomers.
         </Typography>
 
-        <Box
-          component="img"
-          src="/images/neomer-algorithm.jpeg"
-          alt="Neomer Algorithm"
-          onClick={() => setExpanded(true)}
-          sx={{
-            display: 'block',
-            mx: 'auto',
-            width: '70%',
-            maxWidth: '400px',
-            height: 'auto',
-            mt: { xs: 4, md: 0 },
-            mb: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            cursor: 'pointer',
-            transition: 'all 0.3s ease-in-out',
-          }}
-        />
+        <NullomersValuesDiagram />
 
         <Typography variant="body1" gutterBottom align="justify" sx={{ mt: 2 }}>
           The database includes different filtering options, such as:
@@ -105,98 +96,7 @@ const AboutPage = () => {
           </ListItem>
         </List>
 
-        <Box sx={{ mt: 4, height: '600px', position: 'relative' }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            variant="fullWidth"
-            textColor="primary"
-            indicatorColor="primary"
-            sx={{
-              backgroundColor: '#f0f4ff',
-              borderRadius: '12px',
-              width: 'fit-content',
-              mx: 'auto',
-            }}
-          >
-            <Tab
-              label="Genomes"
-              value="genomes"
-              sx={{
-                fontWeight: 'bold',
-                color: tabValue === 'genomes' ? '#fff !important' : 'inherit',
-                backgroundColor: tabValue === 'genomes' ? 'primary.main' : 'transparent',
-                borderRadius: '12px 0 0 12px',
-                minWidth: 120,
-              }}
-            />
-            <Tab
-              label="Exomes"
-              value="exomes"
-              sx={{
-                fontWeight: 'bold',
-                color: tabValue === 'exomes' ? '#fff !important' : 'inherit',
-                backgroundColor: tabValue === 'exomes' ? 'primary.main' : 'transparent',
-                borderRadius: '0 12px 12px 0',
-                minWidth: 120,
-              }}
-            />
-          </Tabs>
-
-          <ReactECharts
-            option={{
-              tooltip: {
-                trigger: 'item',
-                formatter: '{b}: {c}',
-              },
-              labelLine: {
-                show: true,
-                length: 10,
-                length2: 10,
-              },
-
-              legend: {
-                show: true,
-                orient: 'horizontal',
-                bottom: 0,
-                type: 'scroll',
-                textStyle: {
-                  fontSize: 10,
-                },
-              },
-              series: [
-                {
-                  name: 'Distribution',
-                  type: 'pie',
-
-                  radius: ['0%', '70%'],
-                  center: ['50%', '50%'],
-                  data: Object.entries(DIAGRAM_VALUES).map(([name, value]) => ({
-                    name,
-                    value,
-                  })),
-                  label: {
-                    show: true,
-                    formatter: function (parameters: { name: string; value: number }) {
-                      const percent = ((parameters.value / total) * 100).toFixed(2);
-                      return `${parameters.name}: ${percent}%`;
-                    },
-                    fontSize: 20,
-                  },
-
-                  emphasis: {
-                    itemStyle: {
-                      shadowBlur: 10,
-                      shadowOffsetX: 0,
-                      shadowColor: 'rgba(0, 0, 0, 0.5)',
-                    },
-                  },
-                },
-              ],
-            }}
-            style={{ height: '100%', width: '100%' }}
-          />
-        </Box>
+        <SankeyDiagrams />
 
         <Dialog open={expanded} onClose={() => setExpanded(false)} maxWidth="md" fullWidth>
           <DialogContent sx={{ p: 0 }}>

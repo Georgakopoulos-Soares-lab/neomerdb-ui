@@ -52,10 +52,12 @@ interface DataTableProperties<T extends Record<string, unknown>> {
   columnVisibility?: VisibilityState;
   defaultColumnVisibility?: string[];
   onColumnVisibilityChange?: (visibility: VisibilityState) => void;
-  onFilterChange?: (filters: FilterItem[]) => void;
+  filters?: FilterItem[];
+  onFiltersChange?: (filters: FilterItem[]) => void;
   onColumnOrderingChange?: (columnId: string, newIndex: number) => void;
   tableToolbox?: React.ReactNode;
   filterSuggestions?: string[];
+  filtersOperators?: Record<string, string[]>;
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -70,6 +72,7 @@ export function DataTable<T extends Record<string, unknown>>({
   onRowsPerPageChange,
   onRowClick,
   loading = false,
+  filters = [],
   error,
   columnVisibility,
   defaultColumnVisibility,
@@ -77,7 +80,8 @@ export function DataTable<T extends Record<string, unknown>>({
   onColumnOrderingChange,
   tableToolbox,
   filterSuggestions = [],
-  onFilterChange = () => {},
+  onFiltersChange = () => {},
+  filtersOperators = {},
 }: DataTableProperties<T>) {
   const initialVisibility = useMemo(() => {
     const visibility: Record<string, boolean> = {};
@@ -190,8 +194,10 @@ export function DataTable<T extends Record<string, unknown>>({
           <ColumnOrderingToggle table={table} onColumnOrderingChange={onColumnOrderingChange} />
           <RowFiltering
             table={table}
+            filters={filters}
             filterSuggestions={filterSuggestions}
-            onFilterChange={onFilterChange}
+            onFiltersChange={onFiltersChange}
+            filtersOperators={filtersOperators}
           />
           <DownLoadSelectedButton table={table} />
           <ShareLink />

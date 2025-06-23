@@ -10,7 +10,22 @@ const theme = createTheme({
     secondary: {
       main: '#C31A70',
     },
-
+    grey: {
+      50: '#f9f9f9',
+      100: '#f0f0f0',
+      200: '#e0e0e0',
+      300: '#cfcfcf',
+      400: '#bfbfbf',
+      500: '#a6a6a6',
+      600: '#8c8c8c',
+      700: '#737373',
+      800: '#595959',
+      900: '#404040',
+      A100: '#ffffff',
+      A200: '#d9d9d9',
+      A400: '#b3b3b3',
+      A700: '#8c8c8c',
+    },
     background: {
       default: '#f9f9f9',
       paper: '#ffffff',

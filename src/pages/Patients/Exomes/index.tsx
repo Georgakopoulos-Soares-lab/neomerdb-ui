@@ -1,14 +1,18 @@
 import { Box } from '@mui/material';
 import { usePatientExomes } from '../../../hooks/use-patients';
 import { DataTable } from '../../../components/Datatable';
-import { filterPatientData, normalizeTableData } from '../../../helpers';
+import {
+  filterPatientData,
+  genetateFiltersOperatorsPerColumns,
+  normalizeTableData,
+} from '../../../helpers';
 import type { PatientsEntry, PatientsHeader } from '../../../types/patients';
 import { INITIAL_EXOMERS_VISIBLE_COLUMNS } from '../../../constants';
-import { useState } from 'react';
-import { useRouter } from '@tanstack/react-router';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import type { FilterItem } from '../../../types/nullomers';
 
-const PatientsGenomes = () => {
+const PatientsExomes = () => {
   const { data, isLoading, error } = usePatientExomes();
 
   const { data: exomesData, headers } = data || {
@@ -17,11 +21,22 @@ const PatientsGenomes = () => {
   };
 
   const router = useRouter();
+  const search = useSearch({
+    strict: false,
+  });
+  const urlFilters = search.filters ?? '[]';
+
+  const [filters, setFilters] = useState<FilterItem[]>(() => {
+    try {
+      return JSON.parse(urlFilters) as FilterItem[];
+    } catch {
+      return [];
+    }
+  });
 
   const [columnsState, setColumnsState] = useState<{
     ordering: string[];
     visibility: Record<string, boolean>;
-    filters?: FilterItem[];
   } | null>({
     visibility:
       headers?.reduce(
@@ -32,8 +47,18 @@ const PatientsGenomes = () => {
         {},
       ) || {},
     ordering: INITIAL_EXOMERS_VISIBLE_COLUMNS,
-    filters: [],
   });
+
+  const [debouncedFilters, setDebouncedFilters] = useState<FilterItem[]>(filters);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedFilters(filters);
+    }, 300);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [filters]);
 
   const [tableParameters, setTableParameters] = useState<{
     page: number;
@@ -47,7 +72,7 @@ const PatientsGenomes = () => {
     [K in PatientsHeader]: PatientsEntry;
   }>;
 
-  const filteredRows = filterPatientData(tableRows, columnsState?.filters || []);
+  const filteredRows = filterPatientData(tableRows, debouncedFilters);
 
   if (!headers || !exomesData) {
     return;
@@ -86,12 +111,17 @@ const PatientsGenomes = () => {
         pageSizeSelection={[10, 20, 50, 100, filterPatientData?.length || 200]}
         page={tableParameters.page}
         totalRows={filteredRows?.length || 0}
-        onFilterChange={(filters) => {
+        filters={filters}
+        filtersOperators={genetateFiltersOperatorsPerColumns(headers || [])}
+        onFiltersChange={(newFilters) => {
           setTableParameters((previous) => ({ ...previous, page: 0 }));
-          setColumnsState((previous) => ({
-            ...previous!,
-            filters: filters,
-          }));
+          setFilters(newFilters);
+          router.navigate({
+            search: {
+              ...search,
+              filters: JSON.stringify(newFilters),
+            },
+          });
         }}
         onPageChange={(page) => {
           setTableParameters((previous) => ({ ...previous, page }));
@@ -106,7 +136,7 @@ const PatientsGenomes = () => {
         onRowClick={(row) => {
           router.navigate({
             to: `/patient/${row.bcr_patient_barcode}`,
-            search: { tab: 'exomes' },
+            search: {},
           });
         }}
         loading={isLoading}
@@ -116,4 +146,4 @@ const PatientsGenomes = () => {
   );
 };
 
-export default PatientsGenomes;
+export default PatientsExomes;

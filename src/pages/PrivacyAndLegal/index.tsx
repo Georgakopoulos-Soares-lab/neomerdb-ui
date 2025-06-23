@@ -24,12 +24,12 @@ const Privacy = () => (
 
           <Box textAlign="center" mb={3}>
             <Link
-              href="https://creativecommons.org/licenses/by-sa/4.0/"
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
               target="_blank"
               rel="noopener noreferrer"
               underline="hover"
             >
-              View NeomerDB CC BY-SA 4.0 License
+              View NeomerDB CC BY-NC-SA 4.0 License
             </Link>
           </Box>
 
@@ -291,16 +291,16 @@ const Privacy = () => (
           </AccordionSummary>
           <AccordionDetails>
             <Typography paragraph>
-              We have chosen to apply the Creative Commons 4.0 BY-SA license to NeomerDB. More info
-              at{' '}
+              We have chosen to apply the Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+              (CC BY-NC-SA 4.0) license to NeomerDB. More info at{' '}
               <Link
                 component={'a'}
-                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
                 target="_blank"
                 rel="noopener noreferrer"
                 underline="hover"
               >
-                creativecommons.org/licenses/by-sa/4.0
+                creativecommons.org/licenses/by-nc-sa/4.0
               </Link>
               .
             </Typography>

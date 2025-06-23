@@ -61,8 +61,12 @@ export const JaccardChart = () => {
   const option = {
     tooltip: {
       position: 'top',
-      formatter: (parameters: { value: [number, number, number] }) =>
-        `<b>${labels[parameters.value[1]]}</b> - <b>${labels[parameters.value[0]]}</b>:<br/> ${parameters.value[2]}`,
+      formatter: (parameters: { value: [number, number, number] }) => {
+        const value = parameters.value[2];
+        const formattedValue =
+          value === 0 || value === 1 ? value.toString() : value.toExponential(1);
+        return `<b>${labels[parameters.value[1]]}</b> - <b>${labels[parameters.value[0]]}</b>:<br/> ${formattedValue}`;
+      },
     },
     grid: {
       height: '75%',
@@ -77,7 +81,7 @@ export const JaccardChart = () => {
         fontSize: Math.max(10, Math.min(18, 500 / labels.length)),
         overflow: 'truncate',
         interval: 0,
-        formatter: (value: string) => value.length > 5 ? value.slice(0, 5) + '…' : value
+        formatter: (value: string) => (value.length > 5 ? value.slice(0, 5) + '…' : value),
       },
     },
     yAxis: {
@@ -86,11 +90,11 @@ export const JaccardChart = () => {
       splitArea: { show: true },
       axisLabel: {
         fontSize: Math.max(10, Math.min(18, 500 / labels.length)),
-        overflow: 'truncate'
+        overflow: 'truncate',
       },
     },
     visualMap: {
-      show: false,
+      show: true,
       type: 'piecewise',
       orient: 'horizontal',
       left: 'center',
@@ -101,17 +105,19 @@ export const JaccardChart = () => {
       textStyle: {
         fontSize: 16,
       },
+      formatter: (value: number) => value.toExponential(1),
       pieces: [
-        { min: 1, max: 1, color: '#000' },
-        { min: 0.1, max: 0.9999, color: '#196127' },
-        { min: 0.05, max: 0.0999, color: '#239a3b' },
-        { min: 0.01, max: 0.0499, color: '#7bc96f' },
-        { min: 0.005, max: 0.0099, color: '#c6e48b' },
-        { min: 0.001, max: 0.0049, color: '#ebf4c7' },
-        { min: 0.0001, max: 0.000_99, color: '#defde0' },
-        { min: 0, max: 0.0001, color: '#f0fff4' },
+        { min: 1, max: 1, color: '#000', label: '1e0' },
+        { min: 0.1, max: 0.9999, color: '#196127', label: '1e-1 - 1e0' },
+        { min: 0.05, max: 0.0999, color: '#239a3b', label: '5e-2 - 1e-1' },
+        { min: 0.01, max: 0.0499, color: '#7bc96f', label: '1e-2 - 5e-2' },
+        { min: 0.005, max: 0.0099, color: '#c6e48b', label: '5e-3 - 1e-2' },
+        { min: 0.001, max: 0.0049, color: '#ebf4c7', label: '1e-3 - 5e-3' },
+        { min: 0.0001, max: 0.000_99, color: '#defde0', label: '1e-4 - 1e-3' },
+        { min: 0, max: 0.0001, color: '#f0fff4', label: '0 - 1e-4' },
       ],
     },
+
     series: [
       {
         name: 'Jaccard',

@@ -108,8 +108,17 @@ export const filterPatientData = (
     return data;
   }
 
+  const validFilters = filters.filter(
+    (filter) =>
+      filter.field && filter.operator && filter.value !== undefined && filter.value !== '',
+  );
+
+  if (validFilters.length === 0) {
+    return data;
+  }
+
   return data.filter((row) => {
-    return filters.every((filter) => {
+    return validFilters.every((filter) => {
       const value = row[filter.field as PatientsHeader];
       if (value === undefined || value === null) return false;
 
@@ -138,4 +147,35 @@ export const filterPatientData = (
       }
     });
   });
+};
+
+export const genetateFiltersOperatorsPerColumns = (columns: string[]) => {
+  const FILTERS_OPERATORS_GENERIC = ['contains', 'equals', 'startsWith', 'endsWith'];
+  const FILTERS_OPERATORS_AF = ['between'];
+  const FILTERS_OPERATORS_NUMERIC = ['equals', 'notEquals', 'greaterThan', 'lessThan'];
+
+  const accumulator: Record<string, string[]> = {};
+  for (const column of columns) {
+    if (column === 'AF' || column.startsWith('AF_')) {
+      accumulator[`${column}`] = FILTERS_OPERATORS_AF;
+    } else if (
+      [
+        'donor_age_at_diagnosis',
+        'donor_survival_time',
+        'donor_interval_of_last_followup',
+        'days_to_birth',
+        'days_to_death',
+        'days_to_last_followup',
+        'days_to_initial_pathologic_diagnosis',
+        'age_at_initial_pathologic_diagnosis',
+        'year_of_initial_pathologic_diagnosis',
+        'external_beam_radiation_therapy_administered_paraaortic_region_lymph_node_dose',
+      ].includes(column)
+    ) {
+      accumulator[`${column}`] = FILTERS_OPERATORS_NUMERIC;
+    } else {
+      accumulator[`${column}`] = FILTERS_OPERATORS_GENERIC;
+    }
+  }
+  return accumulator;
 };

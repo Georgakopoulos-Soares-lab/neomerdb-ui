@@ -18,51 +18,23 @@ import type { FilterItem } from '../../types/nullomers';
 
 interface RowFilteringProperties<T extends Record<string, unknown>> {
   table: Table<T>;
+  filters?: FilterItem[];
   defaultVisibleColumns?: string[];
   filterSuggestions?: string[];
-  onFilterChange?: (filters: FilterItem[]) => void;
+  onFiltersChange?: (filters: FilterItem[]) => void;
+  filtersOperators?: Record<string, string[]>;
 }
-
-const FILTERS_OPERATORS_GENERIC = ['contains', 'equals', 'startsWith', 'endsWith'];
-const FILTERS_OPERATORS_AF = ['between'];
-const FILTERS_OPERATORS_NUMERIC = ['equals', 'notEquals', 'greaterThan', 'lessThan'];
 
 const RowFiltering = <T extends Record<string, unknown>>({
   table,
+  filters = [],
   filterSuggestions = [],
-  onFilterChange = () => {},
+  onFiltersChange = () => {},
+  filtersOperators = {},
 }: RowFilteringProperties<T>): JSX.Element => {
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>();
-  const [filters, setFilters] = useState<FilterItem[]>([]);
-
-  const [filterOperators, setFilterOperators] = useState<string[]>([
-    ...FILTERS_OPERATORS_GENERIC,
-    ...FILTERS_OPERATORS_NUMERIC,
-    ...FILTERS_OPERATORS_AF,
-  ]);
 
   const open = Boolean(anchorElement);
-
-  const updateFilterOperators = (field: string | null) => {
-    let operators = FILTERS_OPERATORS_GENERIC;
-
-    console.log('Updating filter operators for field:', field);
-
-    if (field?.startsWith('AF')) operators = FILTERS_OPERATORS_AF;
-
-    setFilterOperators(operators);
-    setFilters((previous) => {
-      const newFilters = [...previous];
-      const currentFilter = newFilters.find((f) => f.field === field);
-      if (currentFilter) {
-        currentFilter.operator = operators.includes(currentFilter.operator)
-          ? currentFilter.operator
-          : operators[0];
-      }
-      return newFilters;
-    });
-    return operators;
-  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElement(event.currentTarget);
@@ -73,26 +45,32 @@ const RowFiltering = <T extends Record<string, unknown>>({
   };
 
   const handleAddFilter = () => {
-    setFilters((previous) => [...previous, { field: undefined, operator: 'contains', value: '' }]);
+    onFiltersChange([
+      ...filters,
+      {
+        field: undefined,
+        operator: 'contains',
+        value: '',
+      },
+    ]);
   };
 
   const handleClearFilters = () => {
-    setFilters([]);
-    if (onFilterChange) {
-      onFilterChange([]);
-    }
+    onFiltersChange([]);
+    setAnchorElement(undefined);
   };
 
-  const handleChange = (index: number, key: keyof FilterItem, value: string | undefined) => {
-    const newFilters = [...filters];
-    newFilters[`${index}`] = { ...newFilters[`${index}`], [key]: value };
-
-    setFilters(newFilters);
-    if (onFilterChange) {
-      onFilterChange(newFilters);
+  const handleChange = (index: number, key: keyof FilterItem, value: string | null) => {
+    onFiltersChange(
+      filters.map((filter, index_) =>
+        index_ === index ? { ...filter, [key]: value === null ? undefined : value } : filter,
+      ),
+    );
+    if (key === 'value' && value === '') {
+      onFiltersChange(
+        filters.map((filter, index_) => (index_ === index ? { ...filter, value: '' } : filter)),
+      );
     }
-
-    return newFilters;
   };
 
   const columnOptions = table.getAllColumns().map((col) => col.id);
@@ -100,11 +78,26 @@ const RowFiltering = <T extends Record<string, unknown>>({
   const activeFiltersCount = filters.filter((f) => f.field && f.value).length;
 
   const handleRemoveFilter = (index: number) => {
-    setFilters((previous) => previous.filter((_, index_) => index_ !== index));
-    if (onFilterChange) {
-      onFilterChange(filters.filter((_, index_) => index_ !== index));
+    const newFilters = filters.filter((_, index_) => index_ !== index);
+    onFiltersChange(newFilters);
+    if (newFilters.length === 0) {
+      setAnchorElement(undefined);
     }
   };
+
+  if (Object.keys(filtersOperators).length === 0 && !open) {
+    return (
+      <Box>
+        <Tooltip title="Filter rows">
+          <IconButton size="small" aria-label="Filter rows" disabled onClick={handleClick}>
+            <Badge badgeContent={activeFiltersCount} color="secondary">
+              <FilterAlt />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -144,18 +137,19 @@ const RowFiltering = <T extends Record<string, unknown>>({
               <Autocomplete
                 options={columnOptions}
                 // eslint-disable-next-line unicorn/no-null
-                value={filter.field || null}
+                value={filter.field ?? null}
                 onChange={(_, newValue) => {
-                  setFilters((previous) => {
-                    const newFilters = [...previous];
-                    newFilters[`${index}`] = {
-                      field: newValue === null ? undefined : newValue,
-                      operator: 'contains',
-                      value: '',
-                    };
-                    return newFilters;
-                  });
-                  updateFilterOperators(newValue);
+                  const updatedFilters = filters.map((f, _index) =>
+                    _index === index
+                      ? {
+                          ...f,
+                          field: newValue === null ? undefined : newValue,
+                          operator: (filtersOperators[newValue || ''] || [])[0] || 'contains',
+                          value: '',
+                        }
+                      : f,
+                  );
+                  onFiltersChange(updatedFilters);
                 }}
                 renderInput={(parameters) => (
                   <TextField {...parameters} label="Field" size="small" />
@@ -170,14 +164,9 @@ const RowFiltering = <T extends Record<string, unknown>>({
                 size="small"
                 variant="outlined"
                 sx={{ width: 120 }}
-                disabled={
-                  !filter.field ||
-                  filter.field === 'undefined' ||
-                  filter.field === '' ||
-                  filter.field.startsWith('AF')
-                }
+                disabled={!filter.field}
               >
-                {filterOperators.map((operator) => (
+                {(filtersOperators[filter.field || ''] || []).map((operator) => (
                   <MenuItem key={operator} value={operator}>
                     {operator}
                   </MenuItem>
@@ -216,7 +205,6 @@ const RowFiltering = <T extends Record<string, unknown>>({
                   />
                 </Box>
               ) : (
-                // Autocomplete που επιτρέπει ελεύθερη πληκτρολόγηση και προτάσεις από filterSuggestions
                 <Autocomplete
                   freeSolo
                   sx={{ flex: 1 }}
