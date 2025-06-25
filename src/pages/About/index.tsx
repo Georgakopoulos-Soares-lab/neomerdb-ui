@@ -36,7 +36,7 @@ const AboutPage = () => {
 
         <Box
           component="img"
-          src="/images/neomer-algorithm.jpeg"
+          src="/images/neomer-algorithm.png"
           alt="Neomer Algorithm"
           onClick={() => setExpanded(true)}
           sx={{

@@ -18,7 +18,6 @@ const SankeyDiagrams = () => {
       <Box
         sx={{
           width: '100%',
-          height: 500,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -62,6 +61,14 @@ const SankeyDiagrams = () => {
             />
           </Tabs>
         </Box>
+      </Box>
+      <Box sx={{ width: '80%', marginTop: 4 }}>
+        <Box
+          component={'img'}
+          src={`/images/${tabValue === 'genomes' ? 'sankey-genome.png' : 'sankey-exome.png'}`}
+          alt={`Sankey Diagram for ${tabValue}`}
+          sx={{ width: '100%', borderRadius: 2, boxShadow: 3 }}
+        />
       </Box>
     </Box>
   );
