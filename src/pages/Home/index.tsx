@@ -70,6 +70,9 @@ const Home = () => {
             </a>
             )
           </Typography>
+          <Typography variant="body2" sx={{ mb: 4 }}>
+            Dr. Ilias Georgakopoulos-Soares has previously filed patent application(s) covering embodiments and concepts on neomers.
+          </Typography>
           <Button
             variant="contained"
             color="primary"
