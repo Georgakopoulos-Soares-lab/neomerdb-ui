@@ -71,7 +71,14 @@ const Home = () => {
             )
           </Typography>
           <Typography variant="body2" sx={{ mb: 4 }}>
-            Dr. Ilias Georgakopoulos-Soares has previously filed patent application(s) covering embodiments and concepts on neomers.
+            The Neomer patent application is titled{' '}
+            <em>Compositions comprising nullomers and methods of using the same for cancer
+            detection and diagnosis</em> (US Patent Application 18/558,992; publication date:
+            2024/07/11; patent office: US).
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 4 }}>
+            Inventors: Nadav Ahituv, Ofer Yizhar-Barnea, Ilias Georgakopoulos-Soares, Ioannis
+            Mouratidis, Martin Hemberg.
           </Typography>
           <Button
             variant="contained"
